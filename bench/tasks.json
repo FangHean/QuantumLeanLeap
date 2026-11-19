@@ -1,0 +1,115 @@
+{
+  "schema": "qll-proof-bench-v1",
+  "version": "0.1.0",
+  "track": "open-library-proof-completion",
+  "tasks": [
+    {
+      "id": "unitary.identity",
+      "category": "algebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Basic"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
+      "goal": "(d : Nat) : (Unitary.identity d).matrix = 1"
+    },
+    {
+      "id": "effect.order",
+      "category": "order",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Basic"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
+      "goal": "{d : Nat} (A : Observable d) : (0 : Operator d) \u2264 1"
+    },
+    {
+      "id": "expectation.interval",
+      "category": "semantics",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Expectation"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
+      "goal": "{V : Type} {d : Nat} (S : CQState V d) (Q : CQAssertion V d) : |expectation S Q| \u2264 1"
+    },
+    {
+      "id": "pairing.transitive",
+      "category": "order",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Expectation"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
+      "goal": "{d : Nat} {A B C r : Operator d} (hAB : A \u2264 B) (hBC : B \u2264 C) (hr : r.PosSemidef) : pairing A r \u2264 pairing C r"
+    },
+    {
+      "id": "state.skip_seq",
+      "category": "semantics",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.StateRules"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
+      "goal": "{V : Type} {d : Nat} [DecidableEq V] (p : QProg V d) (S : CQState V d) : interp (.seq .skip p) S = interp p S"
+    },
+    {
+      "id": "wp.compose_three",
+      "category": "semantics",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Compatibility.PaperAPI"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.PaperAPI\n",
+      "goal": "{V : Type} {d : Nat} [NeZero d] [DecidableEq V] (a b c : QProg V d) (Q : CQAssertion V d) : wp (.seq a (.seq b c)) Q = wp a (wp b (wp c Q))"
+    },
+    {
+      "id": "paper.wp_monotone_twice",
+      "category": "order",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Compatibility.Continuity"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.PaperAPI\nopen OmegaCompletePartialOrder\n",
+      "goal": "{V : Type} {d : Nat} [NeZero d] [DecidableEq V] (p : QProg V d) {P Q : CQAssertion V d} (h : P \u2264 Q) : wp p (wp p P) \u2264 wp p (wp p Q)"
+    },
+    {
+      "id": "paper.loop_fixed",
+      "category": "loops",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Compatibility.FixedPoint"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.PaperAPI\nopen OmegaCompletePartialOrder\n",
+      "goal": "{V : Type} {d : Nat} [NeZero d] [DecidableEq V] (g : Store V \u2192 Prop) [DecidablePred g] (b : QProg V d) (Q : CQAssertion V d) : loopFunctional g b Q (wp (.qwhile g b) Q) \u2264 wp (.qwhile g b) Q"
+    },
+    {
+      "id": "oracle.injective",
+      "category": "oracle",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover.Oracle"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover\nopen Matrix\n",
+      "goal": "{N : Nat} (f : Fin N \u2192 Bool) : Function.Injective (flip f)"
+    },
+    {
+      "id": "oracle.phase_linear",
+      "category": "oracle",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover.Oracle"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover\nopen Matrix\n",
+      "goal": "{N m : Nat} (f : Fin N \u2192 Bool) (v : Address N m \u2192 Complex) : oracle f *\u1d65 minusLift v = minusLift (phaseAction f v)"
+    },
+    {
+      "id": "grover.two_slots",
+      "category": "task",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover.Specification"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover\nopen Matrix\n",
+      "goal": "(target : Fin 4) : successWeight (exactFourCircuit 2) (singletonMark target) (acceptsAll (singletonMark target)) = 1"
+    },
+    {
+      "id": "grover.cost",
+      "category": "resource",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover.Specification"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover\nopen Matrix\n",
+      "goal": "(target : Fin 4) : expectedRounds (exactFourCircuit 2) (singletonMark target) \u2264 1"
+    }
+  ]
+}

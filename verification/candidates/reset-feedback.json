@@ -1,0 +1,1 @@
+{"schema": "qhl-reset-v1", "program": {"op": "seq", "first": {"op": "measure"}, "second": {"op": "if_zero", "zero": {"op": "skip"}, "nonzero": {"op": "x"}}}}

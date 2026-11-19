@@ -1,0 +1,45 @@
+{
+  "checked_on": "2026-11-18",
+  "paper": {
+    "url": "https://arxiv.org/html/2611.09822v2",
+    "sha256": "2051f3d1b7feeb6af369f750eb7c2d96a47220189d29ca41918d25a71439bbc5",
+    "sections": [
+      "Appendix A",
+      "Code availability",
+      "Reference 191"
+    ],
+    "code_release_statement": "will be open sourced shortly",
+    "google_source_commit": null,
+    "scope": "published mathematical definitions and printed Lean interfaces, not Google source API compatibility"
+  },
+  "physlib": {
+    "url": "https://github.com/leanprover-community/physlib",
+    "observed_head": "4222166c0e3e41300971ee768ad535d5679c0146",
+    "observed_head_toolchain": "leanprover/lean4:v4.35.0",
+    "pinned_commit": "a50684a1919e84dc1c761028ff4f77cd59e2de6b",
+    "pinned_upstream_toolchain": "leanprover/lean4:v4.33.0",
+    "project_toolchain": "leanprover/lean4:v4.33.1",
+    "project_mathlib_commit": "0df444a360eaa60ab8c11dca51a86af692955474",
+    "tested_import": "QuantumInfo.ForMathlib.HermitianMat.Inner",
+    "whole_physlib_build_claimed": false
+  },
+  "interface_differences_addressed": [
+    "Physlib HermitianMat with real trace and real inner product",
+    "density and effect subtype equivalences",
+    "existential mass CQState representation",
+    "decidable Prop guards translated to Bool",
+    "qset to basis zero in positive dimension",
+    "interp.toStateFun projection",
+    "expect_wp argument order and equality direction",
+    "pointwise Loewner order and monotone wp",
+    "Mathlib omega-CPO and bottom for effects, assertions and CQ states",
+    "omega-Scott continuous wp and forward interpretation",
+    "loop WP equals Mathlib Kleene chain supremum from bottom"
+  ],
+  "not_claimed": [
+    "Google namespace or exact constructor parameter compatibility",
+    "latest Physlib compatibility",
+    "full Physlib build",
+    "Google official verifier acceptance"
+  ]
+}

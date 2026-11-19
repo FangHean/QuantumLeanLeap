@@ -1,0 +1,10 @@
+/.lake/
+/.venv/
+__pycache__/
+/artifacts/*.kmx
+/artifacts/*.kmb
+/artifacts/
+/dist/
+.env
+.env.*
+.DS_Store

@@ -1,0 +1,7 @@
+QuantumLeanLeap
+
+Distributed under Apache-2.0; see LICENSE.
+The Algorithms certificate facade refers to Lean-QuantumAlg by QudeLeap Team.
+Lean-QuantumAlg, Mathlib and Physlib are separately distributed dependencies;
+their original copyright and license notices remain applicable.
+This project is an independent research implementation, not an official Google release.
