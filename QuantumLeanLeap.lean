@@ -1,3 +1,2 @@
-import QuantumLeanLeap.Algorithms
-import QuantumLeanLeap.GoogleVQCC.InvSqrt
 import QuantumLeanLeap.GoogleQHL
+import QuantumLeanLeap.GoogleQHL.Bench36

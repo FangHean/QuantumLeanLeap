@@ -1,5 +1,7 @@
 name: Lean and benchmark
 on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -10,15 +12,18 @@ jobs:
         with:
           use-mathlib-cache: true
       - run: python3 scripts/verify_qhl.py
-      - run: python3 -m unittest discover -s scripts -p 'test_bench.py' -v
-      - run: python3 -m unittest discover -s scripts -p 'test_qhl_candidate.py' -v
+      - run: python3 scripts/validate_bench.py
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
       - run: python3 scripts/bench.py evaluate bench/references.jsonl --output artifacts/bench/ci-reference --k 1
-      - name: Require all reference certificates
+      - run: python3 scripts/bench.py --suite calibration evaluate bench/calibration-references.jsonl --output artifacts/bench/ci-calibration --k 1
+      - name: Require reference certificates
         run: |
           python3 - <<'PY'
           import json
-          r=json.load(open('artifacts/bench/ci-reference/report.json'))
-          assert all(x['status']=='accepted' for x in r['results'])
+          for name,count in [('ci-reference',2),('ci-calibration',12)]:
+              r=json.load(open(f'artifacts/bench/{name}/report.json'))
+              assert len(r['results']) == count
+              assert all(x['status']=='accepted' for x in r['results'])
           PY
       - run: python3 scripts/package_release.py
       - uses: actions/upload-artifact@v4
@@ -27,4 +32,20 @@ jobs:
           path: |
             dist/
             artifacts/qhl/
-            artifacts/bench/ci-reference/
+            artifacts/bench/
+  release:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/package_release.py
+      - name: Publish initial verified source release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.1.0 >/dev/null 2>&1; then
+            gh release create v0.1.0 --target "$GITHUB_SHA" --title 'QuantumLeanLeap v0.1.0' --notes-file CHANGELOG.md dist/QuantumLeanLeap-0.1.0.tar.gz dist/QuantumLeanLeap-0.1.0.tar.gz.sha256
+          fi

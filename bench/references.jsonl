@@ -1,12 +1,2 @@
-{"task_id": "unitary.identity", "model": "reference-selftest", "attempt": 0, "proof": "by rfl"}
-{"task_id": "effect.order", "model": "reference-selftest", "attempt": 0, "proof": "by exact A.nonnegative.trans A.le_identity"}
-{"task_id": "expectation.interval", "model": "reference-selftest", "attempt": 0, "proof": "by rw [abs_of_nonneg (expectation_bounds S Q).1]; exact (expectation_bounds S Q).2"}
-{"task_id": "pairing.transitive", "model": "reference-selftest", "attempt": 0, "proof": "by exact pairing_mono (hAB.trans hBC) hr"}
-{"task_id": "state.skip_seq", "model": "reference-selftest", "attempt": 0, "proof": "by rw [interp_seq, interp_skip]"}
-{"task_id": "wp.compose_three", "model": "reference-selftest", "attempt": 0, "proof": "by rw [wp_seq, wp_seq]"}
-{"task_id": "paper.wp_monotone_twice", "model": "reference-selftest", "attempt": 0, "proof": "by exact wp_mono p (wp_mono p h)"}
-{"task_id": "paper.loop_fixed", "model": "reference-selftest", "attempt": 0, "proof": "by exact (wp_qwhile_fixedPoint g b Q).le"}
-{"task_id": "oracle.injective", "model": "reference-selftest", "attempt": 0, "proof": "by exact (flip_involutive f).injective"}
-{"task_id": "oracle.phase_linear", "model": "reference-selftest", "attempt": 0, "proof": "by exact oracle_phase_kickback f v"}
-{"task_id": "grover.two_slots", "model": "reference-selftest", "attempt": 0, "proof": "by exact exactFour_findAll 2 target"}
-{"task_id": "grover.cost", "model": "reference-selftest", "attempt": 0, "proof": "by exact (exactFour_expectedRounds 2 target).le"}
+{"task_id": "BitOracleUnitaryHermitian", "model": "reference-selftest", "attempt": 0, "proof": ["by\n  classical\n  apply Matrix.mem_unitaryGroup_iff'.mpr\n  ext i j\n  simp only [Matrix.star_eq_conjTranspose, Matrix.mul_apply, Matrix.conjTranspose_apply,\n    bitOracle, QuantumLeanLeap.GoogleQHL.Bench36.permMatrix]\n  simp [Matrix.one_apply, (bitOraclePerm f).injective.eq_iff, eq_comm]", "by\n  classical\n  ext i j\n  have h : i = bitOraclePerm f j \u2194 j = bitOraclePerm f i := by\n    constructor\n    \u00b7 intro h; rw [h]; exact ((bitOraclePerm f).symm_apply_apply j).symm\n    \u00b7 intro h; rw [h]; exact ((bitOraclePerm f).symm_apply_apply i).symm\n  simp only [bitOracle, QuantumLeanLeap.GoogleQHL.Bench36.permMatrix, Matrix.conjTranspose_apply]\n  simp [h]"]}
+{"task_id": "HilbertSchmidtTranspositionInvariance", "model": "reference-selftest", "attempt": 0, "proof": ["by\n  have h (A B : Operator d) : hsInner A.transpose B.transpose = hsInner A B := by\n    simp only [hsInner, Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, Matrix.conjTranspose_apply,\n      Matrix.transpose_apply]\n    exact Finset.sum_comm\n  constructor\n  \u00b7 exact h U V\n  \u00b7 change Real.sqrt (hsInner (U.transpose - V.transpose) (U.transpose - V.transpose)).re = _\n    rw [\u2190 Matrix.transpose_sub, h]\n    rfl"]}

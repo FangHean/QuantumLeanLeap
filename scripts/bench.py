@@ -42,7 +42,7 @@ def load_tasks():
 
 def fingerprint():
     snapshot = trusted.snapshot()
-    paths = [TASKS, ROOT/'scripts/bench.py', ROOT/'bench/references.jsonl', ROOT/'QuantumLeanLeap.lean']
+    paths = [ROOT/'bench/tasks.json', ROOT/'bench/calibration.json', ROOT/'bench/migration.json', ROOT/'bench/calibration-references.jsonl', ROOT/'scripts/bench.py', ROOT/'bench/references.jsonl', ROOT/'QuantumLeanLeap.lean']
     paths += sorted((ROOT/'QuantumLeanLeap').rglob('*.lean'))
     snapshot['benchmark_sha256'] = {str(p.relative_to(ROOT)): trusted.digest(p.read_bytes()) for p in paths}
     return snapshot
@@ -55,32 +55,51 @@ def check_lock(raw):
         raise RuntimeError('Benchmark lock changed during evaluation')
 
 
+def goals(task):
+    return task.get('goals', [{'name': 'main', 'goal': task.get('goal')}])
+
+
 def prompt(task):
     imports = '\n'.join('import ' + x for x in task['imports'])
-    return ('Complete the following Lean 4 theorem. Return ONLY a Lean proof term, '
-            'usually starting with by. No Markdown fences, declarations, sorry, '
-            'admit, axioms or native_decide. Library theorem reuse is allowed. '
-            'The theorem type and imports are immutable.\n\n' + imports + '\n' +
-            task['context'] + '\ntheorem answer ' + task['goal'] + ' := <PROOF>\n')
+    gs = goals(task)
+    return ('Complete ALL Lean 4 proof obligations for this problem. Return ONLY a JSON array '
+            f'of {len(gs)} Lean proof terms in the displayed order. No Markdown fences, '
+            'declarations, sorry, admit, axioms or native_decide. Library theorem reuse is allowed. '
+            'Types, assumptions and imports are immutable.\n\n' + imports + '\n' +
+            task['context'] + '\n' + '\n'.join(
+                f"theorem accepted_{i} {g['goal']} := <PROOF>" for i, g in enumerate(gs)))
 
 
 def source(task, proof):
-    if not isinstance(proof, str) or not proof.strip() or len(proof.encode()) > 32768:
-        raise ValueError('Missing proof or proof exceeds 32768 bytes')
-    if FORBIDDEN.search(proof):
-        raise ValueError('Proof contains forbidden declaration, tactic or placeholder')
+    gs = goals(task)
+    # A single legacy proof remains valid only for a single-obligation task.
+    if isinstance(proof, str):
+        if proof.lstrip().startswith('['):
+            try: proof = json.loads(proof)
+            except ValueError as exc: raise ValueError('Invalid JSON proof array') from exc
+        else: proof = [proof]
+    if not isinstance(proof, list) or len(proof) != len(gs):
+        raise ValueError(f'Expected exactly {len(gs)} proof terms; all obligations are required')
+    for term in proof:
+        if not isinstance(term, str) or not term.strip() or len(term.encode()) > 32768:
+            raise ValueError('Missing proof or proof exceeds 32768 bytes')
+        if FORBIDDEN.search(term):
+            raise ValueError('Proof contains forbidden declaration, tactic or placeholder')
     return ('\n'.join('import ' + x for x in task['imports']) + '\n' +
-            'set_option maxHeartbeats 800000\nset_option maxRecDepth 2048\n' +
-            'namespace QLLBenchSubmission\n' + task['context'] + '\n' +
-            'theorem accepted ' + task['goal'] + ' := (\n' + proof + '\n)\n' +
-            '#print axioms QLLBenchSubmission.accepted\nend QLLBenchSubmission\n')
+            'set_option autoImplicit false\nset_option maxHeartbeats 800000\nset_option maxRecDepth 2048\n' +
+            'noncomputable section\nnamespace QLLBenchSubmission\n' +
+            task['context'] + '\n' +
+            '\n'.join(f"theorem accepted_{i} {g['goal']} := (\n{term}\n)\n"
+                      f"#print axioms QLLBenchSubmission.accepted_{i}\n"
+                      for i, (g, term) in enumerate(zip(gs, proof))) +
+            'end QLLBenchSubmission\nend\n')
 
 
-def audit(output):
-    matches = re.findall(r"'QLLBenchSubmission.accepted' (?:depends on axioms: \[([^\]]*)\]|does not depend on any axioms)", output)
-    if len(matches) != 1:
+def audit(output, count=1):
+    matches = re.findall(r"'QLLBenchSubmission.accepted_(\d+)' (?:depends on axioms: \[([^\]]*)\]|does not depend on any axioms)", output)
+    if len(matches) != count or {int(i) for i, _ in matches} != set(range(count)):
         raise ValueError('Missing or duplicate certificate axiom report')
-    axioms = [x.strip() for x in matches[0].split(',') if x.strip()]
+    axioms = sorted({x.strip() for _, report in matches for x in report.split(',') if x.strip()})
     if set(axioms) - ALLOWED:
         raise ValueError('Certificate uses unapproved axioms')
     return axioms
@@ -169,7 +188,7 @@ def evaluate(args):
                 (run/'lean.log').write_text(output)
                 row['lean_exit'] = proc.returncode
                 if proc.returncode == 0:
-                    row['axioms'] = audit(output)
+                    row['axioms'] = audit(output, len(goals(tasks[sample['task_id']])))
                     row['status'] = 'accepted'
                 else:
                     row['reason'] = 'Lean did not certify the fixed goal; not a proof of mathematical falsity'
@@ -181,7 +200,7 @@ def evaluate(args):
         check_lock(raw_lock)
         rows.append(row)
         dump(run/'result.json', row)
-    report = {'schema': 'qll-proof-results-v1', 'track': 'open-library-proof-completion',
+    report = {'schema': 'qll-proof-results-v1', 'track': 'translated-36' if len(tasks) == 36 else 'calibration',
               'valid_run': True, 'official_google_benchmark': False,
               'created_utc': datetime.now(timezone.utc).isoformat(),
               'lock_sha256': trusted.digest(raw_lock),
@@ -227,13 +246,15 @@ def generate(args):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__); sub=p.add_subparsers(dest='cmd',required=True)
+    p=argparse.ArgumentParser(description=__doc__); p.add_argument('--suite', choices=['translated36','calibration'], default='translated36'); sub=p.add_subparsers(dest='cmd',required=True)
     sub.add_parser('list')
     ex=sub.add_parser('export'); ex.add_argument('output',type=Path)
     fr=sub.add_parser('freeze'); fr.add_argument('output',type=Path)
     ev=sub.add_parser('evaluate'); ev.add_argument('samples',type=Path); ev.add_argument('--output',type=Path,required=True); ev.add_argument('--timeout',type=int,default=120); ev.add_argument('--build-timeout',type=int,default=1800); ev.add_argument('--k',type=int,nargs='+',default=[1,5])
     g=sub.add_parser('generate'); g.add_argument('--model',required=True); g.add_argument('--base-url',required=True); g.add_argument('--key-env',default='QLEAP_API_KEY'); g.add_argument('--output',type=Path,required=True); g.add_argument('--samples',type=int,default=1); g.add_argument('--max-tokens',type=int,default=4096); g.add_argument('--temperature',type=float,default=0.0); g.add_argument('--timeout',type=int,default=180)
     args=p.parse_args()
+    global TASKS
+    if args.suite == 'calibration': TASKS = ROOT/'bench/calibration.json'
     for name in ('timeout','build_timeout','samples','max_tokens'):
         v=getattr(args,name,None)
         if isinstance(v,int) and v<=0: p.error(name+' must be positive')

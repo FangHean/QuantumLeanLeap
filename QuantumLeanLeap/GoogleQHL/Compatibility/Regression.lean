@@ -2,7 +2,7 @@ import QuantumLeanLeap.GoogleQHL.Compatibility.PaperAPI
 import QuantumLeanLeap.GoogleQHL.Compatibility.FixedPoint
 import QuantumLeanLeap.GoogleQHL.Compatibility.StateContinuity
 import QuantumLeanLeap.GoogleQHL.StateRegression
-import QuantumLeanLeap.GoogleQHL.Verification.ResetNative
+import QuantumLeanLeap.GoogleQHL.Verification.ResetSemantics
 
 namespace QuantumLeanLeap.GoogleQHL.PaperAPI.Regression
 
@@ -50,7 +50,7 @@ theorem false_prop_loop_returns_input [DecidableEq Var] (body : QProg Var d) (S 
   exact state_ofCore_toCore S
 
 /-- The existing JSON candidate language can use the paper-shaped frontend
-without altering its operational or native backend interpretation. -/
+without altering its operational or matrix backend interpretation. -/
 def fromReset : Verification.ResetLanguage.Program → QProg Unit 2
   | .skip => .skip
   | .x => .apply Verification.ResetLanguage.xUnitary
@@ -69,15 +69,15 @@ theorem fromReset_toCore (p : Verification.ResetLanguage.Program) :
   | seq a b iha ihb => simp only [fromReset, QProg.toCore, iha, ihb, Verification.ResetLanguage.Program.compile]
   | ifZero a b iha ihb => simp only [fromReset, QProg.toCore, iha, ihb, Verification.ResetLanguage.Program.compile]
 
-theorem fromReset_native_histories (p : Verification.ResetLanguage.Program)
+theorem fromReset_matrix_histories (p : Verification.ResetLanguage.Program)
     (fuel : Nat) (input : GoogleQHL.Branch Unit 2) :
     GoogleQHL.interpApprox (fromReset p).toCore fuel input = p.toDynamic.run input := by
   rw [fromReset_toCore]
   exact (p.toDynamic_run fuel input).symm
 
 /-- Inner-product expectation in the new interface agrees with the actual
-native-gate dynamic program on every legal mixed input and assertion. -/
-theorem fromReset_native_expectation (p : Verification.ResetLanguage.Program)
+matrix-gate dynamic program on every legal mixed input and assertion. -/
+theorem fromReset_matrix_expectation (p : Verification.ResetLanguage.Program)
     (S : GoogleQHL.CQState Unit 2) (Q : GoogleQHL.CQAssertion Unit 2) :
     expect ((interp (fromReset p)).toStateFun (CQState.ofCore S)) (CQAssertion.ofCore Q) =
       GoogleQHL.expectation (GoogleQHL.interp p.toDynamic.compile S) Q := by

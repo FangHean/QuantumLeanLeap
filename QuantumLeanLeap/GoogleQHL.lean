@@ -38,7 +38,7 @@ import QuantumLeanLeap.GoogleQHL.Iterations
 import QuantumLeanLeap.GoogleQHL.IterationWP
 import QuantumLeanLeap.GoogleQHL.IterationRegression
 import QuantumLeanLeap.GoogleQHL.Verification.ResetLanguage
-import QuantumLeanLeap.GoogleQHL.Verification.ResetNative
+import QuantumLeanLeap.GoogleQHL.Verification.ResetSemantics
 import QuantumLeanLeap.GoogleQHL.Compatibility.PaperAPI
 import QuantumLeanLeap.GoogleQHL.Compatibility.OmegaOrder
 import QuantumLeanLeap.GoogleQHL.Compatibility.Continuity

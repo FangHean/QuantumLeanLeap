@@ -15,7 +15,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-LOCK = ROOT / "verification/reset-release-v6.lock.json"
+LOCK = ROOT / "verification/reset-paper-v7.lock.json"
 ARTIFACTS = ROOT / "artifacts/qhl-verification"
 SCHEMA = "qhl-reset-v1"
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
@@ -77,7 +77,7 @@ def parse_candidate(raw):
 def proof_source(expression):
     # expression is emitted exclusively from the closed parser above. No raw
     # candidate strings, filenames, budgets, or proof terms enter Lean source.
-    return f"""import QuantumLeanLeap.GoogleQHL.Verification.ResetNative
+    return f"""import QuantumLeanLeap.GoogleQHL.Verification.ResetSemantics
 set_option maxHeartbeats 800000
 set_option maxRecDepth 4096
 namespace QHLSubmission
@@ -107,12 +107,12 @@ theorem measurement_budget : ∀ fuel,
 theorem source_certificate : ResetSpec.Contract candidate.compile :=
   ⟨semantics, gate_budget, measurement_budget⟩
 theorem accepted : ResetSpec.Contract candidate.toDynamic.compile ∧
-    candidate.toDynamic.worstNativeGates ≤ 1 ∧
+    candidate.toDynamic.worstMatrixGates ≤ 1 ∧
     (∀ (s : Store Unit) (rho : Operator 2),
       ((candidate.toDynamic.run (s, rho)).map Prod.snd).sum = resetState 0 rho) :=
-  ⟨candidate.native_contract source_certificate,
-    candidate.native_gate_budget source_certificate,
-    candidate.native_output source_certificate⟩
+  ⟨candidate.matrix_contract source_certificate,
+    candidate.matrix_gate_budget source_certificate,
+    candidate.matrix_output source_certificate⟩
 #print axioms accepted
 end QHLSubmission
 """
@@ -197,7 +197,7 @@ def verify(candidate_path):
         report["lock_sha256"] = digest(lock_raw)
         compare_snapshot(lock, snapshot())
         report["baseline_verified"] = True
-        result = command(["lake", "build", "QuantumLeanLeap.GoogleQHL.Verification.ResetNative"])
+        result = command(["lake", "build", "QuantumLeanLeap.GoogleQHL.Verification.ResetSemantics"])
         (run_dir / "build.log").write_text(result.stdout + result.stderr)
         if result.returncode:
             raise EnvironmentMismatch("Trusted specification/language build failed; see build.log")
@@ -215,8 +215,8 @@ def verify(candidate_path):
         compare_snapshot(lock, snapshot())
         if LOCK.read_bytes() != lock_raw:
             raise EnvironmentMismatch("Lock changed during verification")
-        report.update(status="accepted", accepted=True, native_backend_verified=True,
-                      backend="QuantumAlg unitary gates with QHL dynamic measurement/control")
+        report.update(status="accepted", accepted=True, matrix_semantics_verified=True,
+                      backend="independent X/Z matrices with QHL measurement/control")
         code = 0
     except Rejected as exc:
         report.update(status="not_certified", reason=str(exc))

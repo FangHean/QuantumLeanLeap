@@ -1,115 +1,543 @@
 {
-  "schema": "qll-proof-bench-v1",
+  "schema": "qll-proof-bench-v2",
   "version": "0.1.0",
-  "track": "open-library-proof-completion",
+  "track": "translated-36",
   "tasks": [
     {
-      "id": "unitary.identity",
-      "category": "algebra",
+      "id": "BitOracleUnitaryHermitian",
+      "category": "Circuits",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Basic"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Circuits.BitOracleUnitaryHermitian.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
-      "goal": "(d : Nat) : (Unitary.identity d).matrix = 1"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nvariable {n m : ℕ}\nopen QuantumLeanLeap.GoogleQHL.Bench36.BitOracleUnitaryHermitian\n",
+      "goals": [
+        {
+          "name": "Unitary.main",
+          "goal": "(f : (Fin n → Bool) → (Fin m → Bool)) :\n    (bitOracle f : Mat (BitReg n m))\n      ∈ Matrix.unitaryGroup (BitReg n m) ℂ"
+        },
+        {
+          "name": "Hermitian.main",
+          "goal": "(f : (Fin n → Bool) → (Fin m → Bool)) :\n    (bitOracle f : Mat (BitReg n m)).conjTranspose\n      = (bitOracle f : Mat (BitReg n m))"
+        }
+      ]
     },
     {
-      "id": "effect.order",
-      "category": "order",
+      "id": "ControlledPhaseFromCNOTHadamards",
+      "category": "Circuits",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Basic"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Circuits.ControlledPhaseFromCNOTHadamards.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
-      "goal": "{d : Nat} (A : Observable d) : (0 : Operator d) \u2264 1"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL.Bench36.ControlledPhaseFromCNOTHadamards\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": ":\n    controlled Z =\n      tensorOp (1 : Operator (2 ^ 1)) H * CNOT *\n        tensorOp (1 : Operator (2 ^ 1)) H"
+        }
+      ]
     },
     {
-      "id": "expectation.interval",
-      "category": "semantics",
+      "id": "ControlledRYTwoCNOTSynthesis",
+      "category": "Circuits",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Expectation"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Circuits.ControlledRYTwoCNOTSynthesis.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
-      "goal": "{V : Type} {d : Nat} (S : CQState V d) (Q : CQAssertion V d) : |expectation S Q| \u2264 1"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL.Bench36.ControlledRYTwoCNOTSynthesis\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(θ : ℝ) :\n    controlled (rotY θ) =\n      tensorOp (1 : Operator (2 ^ 1)) (rotY (θ / 2)) * CNOT *\n        tensorOp (1 : Operator (2 ^ 1)) (rotY (-(θ / 2))) * CNOT"
+        }
+      ]
     },
     {
-      "id": "pairing.transitive",
-      "category": "order",
+      "id": "ControlledUnitaryInvariantSubspaces",
+      "category": "Circuits",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Expectation"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Circuits.ControlledUnitaryInvariantSubspaces.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
-      "goal": "{d : Nat} {A B C r : Operator d} (hAB : A \u2264 B) (hBC : B \u2264 C) (hr : r.PosSemidef) : pairing A r \u2264 pairing C r"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nvariable {n : ℕ}\nopen QuantumLeanLeap.GoogleQHL.Bench36.ControlledUnitaryInvariantSubspaces\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(U : Unitary (2 ^ n)) (x : ℝ) (ψ : Vec (Fin (2 ^ n)))\n    (h_eigen : applyVec U.matrix ψ = Complex.exp (x * Complex.I) • ψ) :\n    applyVec (controlled U.matrix : Operator (2 ^ (1 + n)))\n        (tensorVec (ket0 : Vec (Fin (2 ^ 1))) ψ)\n      = tensorVec (ket0 : Vec (Fin (2 ^ 1))) ψ\n    ∧\n    applyVec (controlled U.matrix : Operator (2 ^ (1 + n)))\n        (tensorVec (ket1 : Vec (Fin (2 ^ 1))) ψ)\n      = Complex.exp (x * Complex.I) •\n        tensorVec (ket1 : Vec (Fin (2 ^ 1))) ψ"
+        }
+      ]
     },
     {
-      "id": "state.skip_seq",
-      "category": "semantics",
+      "id": "ExactQROMFactorization",
+      "category": "Circuits",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.StateRules"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Circuits.ExactQROMFactorization.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL\nopen scoped ComplexOrder MatrixOrder\n",
-      "goal": "{V : Type} {d : Nat} [DecidableEq V] (p : QProg V d) (S : CQState V d) : interp (.seq .skip p) S = interp p S"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nvariable {n m : ℕ}\nopen QuantumLeanLeap.GoogleQHL.Bench36.ExactQROMFactorization\n",
+      "goals": [
+        {
+          "name": "AddressUnitary.main",
+          "goal": "(D : (Fin n → Bool) → (Fin m → Bool)) (k : Fin n → Bool) :\n    (Ck D k : Mat (QReg n m))\n      ∈ Matrix.unitaryGroup (QReg n m) ℂ"
+        },
+        {
+          "name": "AddressAction.main",
+          "goal": "(D : (Fin n → Bool) → (Fin m → Bool))\n    (k x : Fin n → Bool) (y : Fin m → Bool) :\n    applyVec (Ck D k) (ket (x, y)) =\n      if x = k then ket (k, boolFunXor y (D k)) else ket (x, y)"
+        },
+        {
+          "name": "Factorization.main",
+          "goal": "(D : (Fin n → Bool) → (Fin m → Bool))\n    (L : List (Fin n → Bool)) (hL : L.Nodup) (hL_all : ∀ k, k ∈ L) :\n    (L.map (Ck D)).prod = qromOracle D"
+        },
+        {
+          "name": "Commutation.main",
+          "goal": "(D : (Fin n → Bool) → (Fin m → Bool))\n    (k l : Fin n → Bool) :\n    Ck D k * Ck D l = Ck D l * Ck D k"
+        }
+      ]
     },
     {
-      "id": "wp.compose_three",
-      "category": "semantics",
+      "id": "HadamardTensorHadamardMatrix",
+      "category": "Circuits",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Compatibility.PaperAPI"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Circuits.HadamardTensorHadamardMatrix.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL.PaperAPI\n",
-      "goal": "{V : Type} {d : Nat} [NeZero d] [DecidableEq V] (a b c : QProg V d) (Q : CQAssertion V d) : wp (.seq a (.seq b c)) Q = wp a (wp b (wp c Q))"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL.Bench36.HadamardTensorHadamardMatrix\n",
+      "goals": [
+        {
+          "name": "ExplicitMatrix.main",
+          "goal": ":\n    (tensorOp (m := 1) (n := 1) H H : Operator (2 ^ 2)) =\n      (2⁻¹ : ℂ) • (!![(1 : ℂ), 1, 1, 1;\n                        1, -1, 1, -1;\n                        1, 1, -1, -1;\n                        1, -1, -1, 1] : Operator (2 ^ 2))"
+        },
+        {
+          "name": "SelfInverse.main",
+          "goal": ":\n    tensorOp (m := 1) (n := 1) H H * tensorOp (m := 1) (n := 1) H H = (1 : Operator (2 ^ 2))"
+        }
+      ]
     },
     {
-      "id": "paper.wp_monotone_twice",
-      "category": "order",
+      "id": "PhaseKickbackControlledEigenunitary",
+      "category": "Circuits",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Compatibility.Continuity"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Circuits.PhaseKickbackControlledEigenunitary.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL.PaperAPI\nopen OmegaCompletePartialOrder\n",
-      "goal": "{V : Type} {d : Nat} [NeZero d] [DecidableEq V] (p : QProg V d) {P Q : CQAssertion V d} (h : P \u2264 Q) : wp p (wp p P) \u2264 wp p (wp p Q)"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nvariable {n : ℕ}\nopen QuantumLeanLeap.GoogleQHL.Bench36.PhaseKickbackControlledEigenunitary\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(U : Unitary (2 ^ n)) (θ : ℝ)\n    (ψ : Vec (Fin (2 ^ n)))\n    (hψ_normalized : ‖ψ‖ = 1)\n    (h_eigen : applyVec U.matrix (ψ : Vec (Fin (2 ^ n)))\n      = Complex.exp (θ * Complex.I) • (ψ : Vec (Fin (2 ^ n))))\n    (α β : ℂ) :\n    applyVec (controlled U.matrix : Operator (2 ^ (1 + n)))\n        (tensorVec\n          (α • (ket0 : Vec (Fin (2 ^ 1))) + β • (ket1 : Vec (Fin (2 ^ 1))))\n          (ψ : Vec (Fin (2 ^ n))))\n      = tensorVec\n          (α • (ket0 : Vec (Fin (2 ^ 1))) +\n           (β * Complex.exp (θ * Complex.I)) • (ket1 : Vec (Fin (2 ^ 1))))\n          (ψ : Vec (Fin (2 ^ n)))"
+        }
+      ]
     },
     {
-      "id": "paper.loop_fixed",
-      "category": "loops",
+      "id": "VanishingPauliYExpectationRealCircuits",
+      "category": "Circuits",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Compatibility.FixedPoint"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Circuits.VanishingPauliYExpectationRealCircuits.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL.PaperAPI\nopen OmegaCompletePartialOrder\n",
-      "goal": "{V : Type} {d : Nat} [NeZero d] [DecidableEq V] (g : Store V \u2192 Prop) [DecidablePred g] (b : QProg V d) (Q : CQAssertion V d) : loopFunctional g b Q (wp (.qwhile g b) Q) \u2264 wp (.qwhile g b) Q"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nvariable {n : ℕ}\nopen QuantumLeanLeap.GoogleQHL.Bench36.VanishingPauliYExpectationRealCircuits\n",
+      "goals": [
+        {
+          "name": "GeneralObservable.main",
+          "goal": "(ψ : Vec (Fin (2 ^ n))) (A : Operator (2 ^ n))\n    (hψ_real : ∀ i, (ψ i).im = 0)\n    (_hA_imag : ∀ i j, (A i j).re = 0)\n    (hA_skew : ∀ i j, A j i = -A i j) :\n    inner ℂ ψ (applyVec A ψ) = 0"
+        },
+        {
+          "name": "PauliY.main",
+          "goal": "(ψ : Vec (Fin (2 ^ 1)))\n    (hψ_real : ∀ i, (ψ i).im = 0) :\n    inner ℂ ψ (applyVec YOp ψ) = 0"
+        }
+      ]
     },
     {
-      "id": "oracle.injective",
-      "category": "oracle",
+      "id": "WalshHadamardBooleanCharacter",
+      "category": "Circuits",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover.Oracle"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Circuits.WalshHadamardBooleanCharacter.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover\nopen Matrix\n",
-      "goal": "{N : Nat} (f : Fin N \u2192 Bool) : Function.Injective (flip f)"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nvariable {n : ℕ}\nopen QuantumLeanLeap.GoogleQHL.Bench36.WalshHadamardBooleanCharacter\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(s : Fin n → Bool) :\n    applyVec hadamardTensorOp (chiState s)\n      = (ket (ι := BitReg n) s : Vec (BitReg n))"
+        }
+      ]
     },
     {
-      "id": "oracle.phase_linear",
-      "category": "oracle",
+      "id": "EigenvectorsModularMultiplicationShor",
+      "category": "Fourier",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover.Oracle"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Fourier.EigenvectorsModularMultiplicationShor.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover\nopen Matrix\n",
-      "goal": "{N m : Nat} (f : Fin N \u2192 Bool) (v : Address N m \u2192 Complex) : oracle f *\u1d65 minusLift v = minusLift (phaseAction f v)"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\n\nvariable {N : ℕ} [NeZero N]\nopen QuantumLeanLeap.GoogleQHL.Bench36.EigenvectorsModularMultiplicationShor\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(x : ℕ)\n    (hx_pos : 0 < x) (hx_lt : x < N)\n    (hcoprime : Nat.Coprime x N)\n    (hunit : IsUnit (x : ZMod N))\n    (r : ℕ) (hr : r = orderOf hunit.unit)\n    (s : ℕ) (hs : s < r) :\n    applyVec (UxOp (N := N) x) (psiS (N := N) x r s) =\n      Complex.exp (2 * Real.pi * Complex.I * (s : ℂ) / (r : ℂ)) •\n        psiS (N := N) x r s"
+        }
+      ]
     },
     {
-      "id": "grover.two_slots",
-      "category": "task",
+      "id": "FiniteQFTUnitarity",
+      "category": "Fourier",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover.Specification"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Fourier.FiniteQFTUnitarity.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover\nopen Matrix\n",
-      "goal": "(target : Fin 4) : successWeight (exactFourCircuit 2) (singletonMark target) (acceptsAll (singletonMark target)) = 1"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nvariable (M : ℕ+)\nopen QuantumLeanLeap.GoogleQHL.Bench36.FiniteQFTUnitarity\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": ":\n    qftMatrix M ∈ Matrix.unitaryGroup (Fin M) ℂ"
+        }
+      ]
     },
     {
-      "id": "grover.cost",
-      "category": "resource",
+      "id": "ProductStateFactorizationQFT8Ket3",
+      "category": "Fourier",
       "imports": [
-        "QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover.Specification"
+        "QuantumLeanLeap.GoogleQHL.Bench36.Fourier.ProductStateFactorizationQFT8Ket3.Definitions"
       ],
-      "context": "open QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover\nopen Matrix\n",
-      "goal": "(target : Fin 4) : expectedRounds (exactFourCircuit 2) (singletonMark target) \u2264 1"
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL.Bench36.ProductStateFactorizationQFT8Ket3\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(x2 x1 x0 : Fin 2) :\n    applyVec qft8\n      (ket (ι := Fin (2 ^ 3)) 3 : Vec (Fin (2 ^ 3)))\n      (bigEndian x2 x1 x0) =\n      factor2 x2 * factor1 x1 * factor0 x0"
+        }
+      ]
+    },
+    {
+      "id": "QPESuperpositionExactEigenvectors",
+      "category": "Fourier",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.Fourier.QPESuperpositionExactEigenvectors.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL.Bench36.QPESuperpositionExactEigenvectors\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{τ : Type} [Fintype τ] [DecidableEq τ]\n    (U : Mat (TargetReg τ))\n    (u1 u2 : Vec (TargetReg τ))\n    (h_orthonormal :\n      @inner ℂ _ _ u1 u1 = 1 ∧ @inner ℂ _ _ u2 u2 = 1 ∧ @inner ℂ _ _ u1 u2 = 0)\n    (φ1 φ2 : ℝ)\n    (h_eigen1 : applyVec U u1 =\n      Complex.exp (2 * Real.pi * Complex.I * (φ1 : ℂ)) • u1)\n    (h_eigen2 : applyVec U u2 =\n      Complex.exp (2 * Real.pi * Complex.I * (φ2 : ℂ)) • u2)\n    (n : ℕ) (N : ℕ) (hN : N = 2 ^ n)\n    (k1 k2 : Fin N)\n\n    (h_exact1 : (N : ℝ) * φ1 = (k1.val : ℝ))\n    (h_exact2 : (N : ℝ) * φ2 = (k2.val : ℝ))\n    (countIQFT : Mat (CountReg N))\n\n    (h_iqft : countIQFT * countQFT N = 1)\n    (QPE : Vec (TargetReg τ) →ₗ[ℂ]\n           Vec (Fin N × τ))\n\n    (h_qpe_on_eigen : ∀ (u : Vec (TargetReg τ)) (φ : ℝ),\n      applyVec U u =\n        Complex.exp (2 * Real.pi * Complex.I * (φ : ℂ)) • u →\n      QPE u = iqftCountingFactor countIQFT (phaseRibbon N φ) u)\n    (α β : ℂ)\n    (h_norm : Complex.normSq α + Complex.normSq β = 1) :\n\n    (applyVec (countQFT N)\n        (ket (ι := CountReg N) k1 : Vec (CountReg N)) =\n      phaseRibbon N φ1 ∧\n     applyVec (countQFT N)\n        (ket (ι := CountReg N) k2 : Vec (CountReg N)) =\n      phaseRibbon N φ2) ∧\n\n    (QPE u1 = tensorKet k1 u1 ∧ QPE u2 = tensorKet k2 u2) ∧\n\n    (QPE (α • u1 + β • u2) = α • tensorKet k1 u1 + β • tensorKet k2 u2)"
+        }
+      ]
+    },
+    {
+      "id": "FidelityBoundHiddenSubgroupCosetStates",
+      "category": "HSPRepresentation",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.HSPRepresentation.FidelityBoundHiddenSubgroupCosetStates.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nvariable (G : Type*) [Group G] [Finite G]\nopen QuantumLeanLeap.GoogleQHL.Bench36.FidelityBoundHiddenSubgroupCosetStates\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{G : Type*} [Group G] [Finite G]\n    (H K : Subgroup G)\n    (fidelity : (G → G → ℂ) → (G → G → ℂ) → ℝ)\n\n    (h_fidelity_nonneg : 0 ≤ fidelity (rhoK G H) (rhoK G K))\n\n    (h_fidelity_upper :\n      (fidelity (rhoK G H) (rhoK G K)) ^ 2 ≤\n        matTrace G (supportProjector G H) (rhoK G K))\n\n    (h_coset_inner :\n      ∀ g g' : G,\n        vecInner G (cosetState G g H) (cosetState G g' K) =\n          ((cosetOverlapFinset G g g' H K).card : ℂ) /\n            Real.sqrt ((Nat.card H : ℝ) * (Nat.card K : ℝ)))\n\n    (h_product_card :\n      Nat.card {x : G // ∃ h ∈ H, ∃ k ∈ K, x = h * k} *\n        subgroupInterCard G H K = Nat.card H * Nat.card K)\n\n    (h_trace_bound :\n      matTrace G (supportProjector G H) (rhoK G K) ≤\n        (subgroupInterCard G H K : ℝ) / (Nat.card H : ℝ)) :\n    fidelity (rhoK G H) (rhoK G K) ≤\n      Real.sqrt ((subgroupInterCard G H K : ℝ) / (Nat.card H : ℝ))"
+        }
+      ]
+    },
+    {
+      "id": "RankStrongFourierSamplingConditionalState",
+      "category": "HSPRepresentation",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.HSPRepresentation.RankStrongFourierSamplingConditionalState.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nvariable {G V : Type*} [Group G] [Finite G] [Fintype V] [DecidableEq V]\nopen QuantumLeanLeap.GoogleQHL.Bench36.RankStrongFourierSamplingConditionalState\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(H : Subgroup G)\n    (σ : G → Matrix V V ℂ)\n    (χ : G → ℂ)\n    (dσ : ℕ)\n    (rank : Matrix V V ℂ → ℂ)\n    (h_rank_idem : ∀ P : Matrix V V ℂ, P * P = P → rank P = Matrix.trace P)\n    (h_rank_smul : ∀ (c : ℂ) (A : Matrix V V ℂ), c ≠ 0 → rank (c • A) = rank A)\n\n    (h_unitary : ∀ g : G,\n      (σ g).conjTranspose * σ g = 1 ∧ σ g * (σ g).conjTranspose = 1)\n    (h_rep_one : σ 1 = 1)\n    (h_rep_mul : ∀ g h : G, σ (g * h) = σ g * σ h)\n\n    (h_char : ∀ g : G, χ g = Matrix.trace (σ g))\n\n    (h_irreducible : ∀ (P : Matrix V V ℂ),\n      P.conjTranspose = P → P * P = P →\n        (∀ g : G, σ g * P = P * σ g) →\n        P = 0 ∨ P = 1)\n    (h_dim : Nat.card V = dσ)\n    (h_char_sum_ne : charSumStar H χ ≠ 0) :\n\n    IsOrthogonalProjectorOnto (P_H_sigma H σ) (IsHInvariant H σ) ∧\n\n      rhoHat H σ χ =\n        (rank (P_H_sigma H σ))⁻¹ • (P_H_sigma H σ).conjTranspose ∧\n\n      rank (rhoHat H σ χ) = rank (P_H_sigma H σ) ∧\n\n      rank (P_H_sigma H σ) =\n        (1 / (Nat.card H : ℂ)) * charSum H χ ∧\n\n      rank (rhoHat H σ χ) =\n        (1 / (Nat.card H : ℂ)) * charSumStar H χ"
+        }
+      ]
+    },
+    {
+      "id": "WeakFourierSamplingTranspositionSn",
+      "category": "HSPRepresentation",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.HSPRepresentation.WeakFourierSamplingTranspositionSn.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.WeakFourierSamplingTranspositionSn\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{irreps : Type*} [Fintype irreps]\n    (n : ℕ) (hn : 1 < n)\n    (P_triv P_pi : irreps → ℝ)\n    (hP_triv_nn : ∀ x, 0 ≤ P_triv x)\n    (hP_triv_sum : ∑ x, P_triv x = 1)\n    (hP_pi_nn : ∀ x, 0 ≤ P_pi x)\n    (hP_pi_sum : ∑ x, P_pi x = 1)\n    (conjCard : ℕ)\n\n    (h_conj_card_exact :\n      conjCard = Nat.choose n 2 ∧ conjCard = n * (n - 1) / 2)\n\n    (h_weak_fourier_bound :\n      TV P_triv P_pi ≤ 1 / (2 * Real.sqrt (conjCard : ℝ))) :\n    conjCard = Nat.choose n 2 ∧\n      conjCard = n * (n - 1) / 2 ∧\n\n      TV P_triv P_pi ≤\n        1 / Real.sqrt (2 * (n : ℝ) * ((n : ℝ) - 1)) ∧\n\n      (∀ m : ℕ,\n        TV (prodDist P_triv m) (prodDist P_pi m) ≤\n          (m : ℝ) * TV P_triv P_pi) ∧\n\n      (∀ advantage : ℝ, 0 < advantage →\n        ∃ c : ℝ, 0 < c ∧\n          ∀ m : ℕ,\n            advantage ≤ TV (prodDist P_triv m) (prodDist P_pi m) →\n              c * (n : ℝ) ≤ (m : ℝ))"
+        }
+      ]
+    },
+    {
+      "id": "AccumulationProductFormulaErrorsManySmallTerms",
+      "category": "HamiltonianSimulation",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.HamiltonianSimulation.AccumulationProductFormulaErrorsManySmallTerms.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nvariable {d : ℕ}\nopen QuantumLeanLeap.GoogleQHL.Bench36.AccumulationProductFormulaErrorsManySmallTerms\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(M : ℕ)\n    (H F : ℕ → Operator d)\n    (S : ℕ → Operator d)\n    (E : Operator d)\n    (opnorm : Operator d → ℝ)\n    (expm : Operator d → Operator d)\n    (h_opnorm_zero : opnorm 0 = 0)\n    (h_opnorm_nonneg : ∀ A, 0 ≤ opnorm A)\n    (h_opnorm_subadd : ∀ A B, opnorm (A + B) ≤ opnorm A + opnorm B)\n    (h_opnorm_submul : ∀ A B, opnorm (A * B) ≤ opnorm A * opnorm B)\n    (h_expm_zero : expm 0 = 1)\n    (h_expm_bound : ∀ H, opnorm (expm H) ≤ Real.exp (opnorm H))\n    (C γ R : ℝ)\n    (h_C_nonneg : 0 ≤ C)\n    (h_gamma_pos : 0 < γ)\n    (h_gamma_lt_one : γ < 1)\n    (h_R_pos : 0 < R)\n    (h_bound_Mγ : (M : ℝ) * γ ≤ R)\n    (h_hermitian : ∀ j ∈ Finset.Icc 1 M, IsSelfAdjoint (H j))\n    (h_H_small : ∀ j ∈ Finset.Icc 1 M, opnorm (H j) ≤ γ)\n    (h_S_zero : S 0 = 0)\n    (h_S : ∀ k ∈ Finset.Icc 1 M, S k = partialSum H k)\n\n    (h_local :\n      ∀ k ∈ Finset.Icc 1 M,\n        expm (S (k - 1)) * expm (H k) = expm (S k) + F k ∧\n        opnorm (F k) ≤\n          C * opnorm (S (k - 1)) * opnorm (H k) *\n            Real.exp (opnorm (S (k - 1)) + opnorm (H k)))\n\n    (h_error : orderedExpProduct M H expm = expm (S M) + E) :\n\n    opnorm E ≤ (C * Real.exp R / 2) * (M : ℝ) * ((M : ℝ) - 1) * γ ^ 2 ∧\n      ∃ K : ℝ, 0 ≤ K ∧ opnorm E ≤ K * (M : ℝ) ^ 2 * γ ^ 2"
+        }
+      ]
+    },
+    {
+      "id": "FirstOrderLieTrotterGlobalErrorScaling",
+      "category": "HamiltonianSimulation",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.HamiltonianSimulation.FirstOrderLieTrotterGlobalErrorScaling.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nvariable {d : ℕ}\nopen QuantumLeanLeap.GoogleQHL.Bench36.FirstOrderLieTrotterGlobalErrorScaling\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(A B : Operator d)\n    (opnorm : Operator d → ℝ)\n    (expm : Operator d → Operator d)\n    (ν c C t ε : ℝ)\n    (m : ℕ)\n    (h_opnorm_zero : opnorm 0 = 0)\n    (h_opnorm_nonneg : ∀ X, 0 ≤ opnorm X)\n    (h_opnorm_subadd : ∀ X Y, opnorm (X + Y) ≤ opnorm X + opnorm Y)\n    (h_opnorm_submul : ∀ X Y, opnorm (X * Y) ≤ opnorm X * opnorm Y)\n    (h_opnorm_scalar : ∀ (a : ℂ) (X : Operator d),\n      opnorm (a • X) ≤ ‖a‖ * opnorm X)\n    (h_expm_zero : expm 0 = 1)\n    (h_expm_unitary : ∀ (X : Operator d) (τ : ℝ),\n      IsSelfAdjoint X → expm ((-Complex.I * (τ : ℂ)) • X) ∈ Matrix.unitaryGroup (Fin d) ℂ)\n    (h_expm_add : ∀ (X : Operator d) (τ₁ τ₂ : ℝ),\n      expm ((-Complex.I * (τ₁ : ℂ)) • X) * expm ((-Complex.I * (τ₂ : ℂ)) • X) =\n        expm ((-Complex.I * ((τ₁ + τ₂ : ℝ) : ℂ)) • X))\n    (hA : IsSelfAdjoint A)\n    (hB : IsSelfAdjoint B)\n    (hν : ν = max (opnorm A) (opnorm B))\n    (h_nu_pos : 0 < ν)\n    (hc_pos : 0 < c)\n    (hC_pos : 0 < C)\n    (ht_pos : 0 < t)\n    (hε : ε ∈ Set.Ioo (0 : ℝ) 1)\n\n    (h_local :\n      ∀ τ : ℝ,\n        ν * |τ| ≤ c →\n          opnorm\n            (S1 expm A B τ - expm ((-Complex.I * (τ : ℂ)) • (A + B)) +\n              ((τ ^ 2 : ℝ) / 2 : ℂ) • commutator A B) ≤\n            C * ν ^ 3 * |τ| ^ 3)\n\n    (h_telescoping :\n      ∀ (r : ℕ) (U V : ℕ → Operator d),\n        (∀ j ∈ Finset.Icc 1 r,\n          U j ∈ Matrix.unitaryGroup (Fin d) ℂ ∧\n          V j ∈ Matrix.unitaryGroup (Fin d) ℂ) →\n          opnorm\n            (((List.range r).map (fun i => U (i + 1))).prod -\n              ((List.range r).map (fun i => V (i + 1))).prod) ≤\n          Finset.sum (Finset.Icc 1 r) (fun j => opnorm (U j - V j)))\n    (h_m_pos : 0 < m)\n    (h_step_small : ν * t / (m : ℝ) ≤ c) :\n\n    ∃ K : ℝ,\n      0 ≤ K ∧\n        opnorm (((List.range m).map (fun _ => S1 expm A B (t / (m : ℝ)))).prod -\n          expm ((-Complex.I * (t : ℂ)) • (A + B))) ≤\n        K * (ν ^ 2 * t ^ 2 / (m : ℝ)) ∧\n\n        ∃ Kstep : ℝ,\n          0 ≤ Kstep ∧\n            ∀ m' : ℕ,\n              Kstep * (ν ^ 2 * t ^ 2 / ε) ≤ (m' : ℝ) →\n                opnorm (((List.range m').map\n                  (fun _ => S1 expm A B (t / (m' : ℝ)))).prod -\n                  expm ((-Complex.I * (t : ℂ)) • (A + B))) ≤ ε"
+        }
+      ]
+    },
+    {
+      "id": "LeadingCommutatorTermTwoTermExponentialProduct",
+      "category": "HamiltonianSimulation",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.HamiltonianSimulation.LeadingCommutatorTermTwoTermExponentialProduct.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.LeadingCommutatorTermTwoTermExponentialProduct\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": ":\n    ∃ C B : ℝ,\n      0 ≤ C ∧ 0 ≤ B ∧\n        ∀ (d : ℕ)\n          (opnorm : Operator d → ℝ)\n          (expm : Operator d → Operator d)\n          (H1 H2 : Operator d)\n          (γ : ℝ),\n          opnorm 0 = 0 →\n          (∀ A, 0 ≤ opnorm A) →\n          (∀ A B, opnorm (A + B) ≤ opnorm A + opnorm B) →\n          (∀ A B, opnorm (A * B) ≤ opnorm A * opnorm B) →\n          (∀ (a : ℂ) (X : Operator d), opnorm (a • X) ≤ ‖a‖ * opnorm X) →\n          opnorm 1 ≤ 1 →\n          expm 0 = 1 →\n          (∀ H : Operator d,\n              opnorm H ≤ 2 →\n                opnorm (expm H - (1 + H + ((1 / 2 : ℂ) • (H * H)))) ≤\n                  B * opnorm H ^ 3) →\n          0 ≤ γ →\n            γ < 1 →\n              opnorm H1 ≤ γ →\n                opnorm H2 ≤ γ →\n                  opnorm (E12 expm H1 H2 - ((1 / 2 : ℂ) • commutator H1 H2)) ≤\n                    C * γ ^ 3"
+        }
+      ]
+    },
+    {
+      "id": "CoefficientOneNormTruncatedTaylorSimulation",
+      "category": "LCUBlockQSVT",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LCUBlockQSVT.CoefficientOneNormTruncatedTaylorSimulation.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.CoefficientOneNormTruncatedTaylorSimulation\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{J : Type*} [Fintype J] {d : ℕ}\n    (K : ℕ) (β : J → ℝ) (t : ℝ)\n    (P : J → Operator d)\n    (Pphase : (k : ℕ) → (Fin k → J) → Operator d)\n    (hβ_pos : ∀ j : J, 0 < β j)\n    (ht_nonneg : 0 ≤ t)\n    (hP_pauli : ∀ j : J, IsPauliUnitary (P j))\n    (hPphase_unitary : ∀ (k : ℕ) (js : Fin k → J),\n      Pphase k js ∈ Matrix.unitaryGroup (Fin d) ℂ) :\n\n    coeffOneNorm K β t ≤ Real.exp (t * ∑ j : J, β j) ∧\n\n      rawLCUSegmentCount K β t ≤\n        Nat.ceil (Real.exp (t * ∑ j : J, β j)) ∧\n\n      ∃ C : ℝ, 0 ≤ C ∧\n        (rawLCUSegmentCount K β t : ℝ) ≤ C * (t * ∑ j : J, β j + 1)"
+        }
+      ]
+    },
+    {
+      "id": "LCUBlockEncodingPrepareSelect",
+      "category": "LCUBlockQSVT",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LCUBlockQSVT.LCUBlockEncodingPrepareSelect.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen QuantumLeanLeap.GoogleQHL.Bench36\nopen scoped BigOperators\nvariable {a n : ℕ} {L : Type*} [Fintype L] [DecidableEq L]\nopen QuantumLeanLeap.GoogleQHL.Bench36.LCUBlockEncodingPrepareSelect\n",
+      "goals": [
+        {
+          "name": "ProjectedBlock.main",
+          "goal": "(embed : L ↪ Fin (2 ^ a))\n    (αcoeff : L → ℝ)\n    (U : L → Operator (2 ^ n))\n    (P : Unitary (2 ^ a))\n    (W : Unitary (2 ^ (a + n)))\n    (hαcoeff_pos : ∀ ℓ, 0 < αcoeff ℓ)\n    (hU_unitary : ∀ ℓ, U ℓ ∈ Matrix.unitaryGroup (Fin (2 ^ n)) ℂ)\n\n    (hPrepare : ∀ j : Fin (2 ^ a),\n      P.matrix j 0 =\n        ((Real.sqrt (coeffSum αcoeff))⁻¹ : ℝ) *\n          ∑ ℓ, if embed ℓ = j then (Real.sqrt (αcoeff ℓ) : ℝ) else 0)\n\n    (hW_eq : W.matrix =\n      tensorOp P.matrix.conjTranspose\n        (1 : Operator (2 ^ n)) *\n      selectOp embed U *\n      tensorOp P.matrix\n        (1 : Operator (2 ^ n))) :\n\n    projectedBlock a n W.matrix =\n      ((coeffSum αcoeff : ℂ)⁻¹) • weightedSum αcoeff U"
+        },
+        {
+          "name": "BlockEncoding.main",
+          "goal": "(embed : L ↪ Fin (2 ^ a))\n    (αcoeff : L → ℝ)\n    (U : L → Operator (2 ^ n))\n    (P : Unitary (2 ^ a))\n    (W : Unitary (2 ^ (a + n)))\n    (hαcoeff_pos : ∀ ℓ, 0 < αcoeff ℓ)\n    (hU_unitary : ∀ ℓ, U ℓ ∈ Matrix.unitaryGroup (Fin (2 ^ n)) ℂ)\n    (hPrepare : ∀ j : Fin (2 ^ a),\n      P.matrix j 0 =\n        ((Real.sqrt (coeffSum αcoeff))⁻¹ : ℝ) *\n          ∑ ℓ, if embed ℓ = j then (Real.sqrt (αcoeff ℓ) : ℝ) else 0)\n    (hW_eq : W.matrix =\n      tensorOp P.matrix.conjTranspose\n        (1 : Operator (2 ^ n)) *\n      selectOp embed U *\n      tensorOp P.matrix\n        (1 : Operator (2 ^ n))) :\n    BlockEncoding (coeffSum αcoeff) a n 0 W (weightedSum αcoeff U)"
+        }
+      ]
+    },
+    {
+      "id": "CommonStabilizerFullRankStates",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.CommonStabilizerFullRankStates.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.CommonStabilizerFullRankStates\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{d : ℕ}\n    (ρ σ W : Operator d)\n    (r s : Fin d → ℝ)\n    (rvec svec : Fin d → Fin d → ℂ)\n\n    (hρ_density : IsHermitianTraceOne ρ)\n    (hσ_density : IsHermitianTraceOne σ)\n    (hρ_full : IsFullRank ρ)\n    (hσ_full : IsFullRank σ)\n\n    (hρ_spectrum : HasSpectralExpansion ρ r rvec)\n    (hσ_spectrum : HasSpectralExpansion σ s svec)\n\n    (hr_simple : SimpleSpectrum r)\n    (hs_simple : SimpleSpectrum s)\n\n    (h_cross : ∀ i j : Fin d, innerProd (rvec i) (svec j) ≠ 0)\n\n    (hW_unitary : W ∈ Matrix.unitaryGroup (Fin d) ℂ)\n    (hWρ : W * ρ * W.conjTranspose = ρ)\n    (hWσ : W * σ * W.conjTranspose = σ) :\n\n    IsScalarUnitary W ∧\n\n    (∀ V : Operator d,\n      V ∈ Matrix.unitaryGroup (Fin d) ℂ →\n        V * ρ * V.conjTranspose = ρ →\n          V * σ * V.conjTranspose = σ →\n            IsScalarUnitary V)"
+        }
+      ]
+    },
+    {
+      "id": "FidelityHammingWeightTruncatedPhaseState",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.FidelityHammingWeightTruncatedPhaseState.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.FidelityHammingWeightTruncatedPhaseState\n",
+      "goals": [
+        {
+          "name": "FiniteFidelity.main",
+          "goal": "(n r : ℕ) (x : Fin n → ZMod 2) :\n    Complex.normSq\n      (∑ y : Fin n → ZMod 2,\n        starRingEnd ℂ (psiX n x y) * psiXR n r x y) =\n      (R n r : ℝ) / (2 : ℝ) ^ n"
+        },
+        {
+          "name": "AsymptoticAchievability.main",
+          "goal": "(η : ℝ) (hη_pos : 0 < η) (hη_lt : η < 1) :\n    ∃ c : ℝ, 0 < c ∧\n      Filter.liminf\n        (fun n : ℕ =>\n          (R n ⌊(n : ℝ) / 2 + c * Real.sqrt (n : ℝ)⌋₊ : ℝ) / (2 : ℝ) ^ n)\n        Filter.atTop ≥ 1 - η"
+        }
+      ]
+    },
+    {
+      "id": "HilbertSchmidtTranspositionInvariance",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.HilbertSchmidtTranspositionInvariance.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\n\nopen QuantumLeanLeap.GoogleQHL.Bench36.HilbertSchmidtTranspositionInvariance\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{d : ℕ}\n    (U V : Operator d) :\n\n    hsInner U.transpose V.transpose = hsInner U V ∧\n\n    hsNorm (U.transpose - V.transpose) = hsNorm (U - V)"
+        }
+      ]
+    },
+    {
+      "id": "LinearDependenceRvsFtwo",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.LinearDependenceRvsFtwo.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\n\nopen QuantumLeanLeap.GoogleQHL.Bench36.LinearDependenceRvsFtwo\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": ":\n\n    LinearIndependent ℝ vectorFamilyR ∧\n\n    ¬LinearIndependent (ZMod 2) vectorFamilyF ∧\n\n    (Submodule.span (ZMod 2) (Set.range vectorFamilyF) : Set (Fin 3 → ZMod 2)) =\n      {w | w = 0 ∨ w = v1F ∨ w = v2F ∨ w = v3F}"
+        }
+      ]
+    },
+    {
+      "id": "LocalMarginalUnreadProjectiveMeasurement",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.LocalMarginalUnreadProjectiveMeasurement.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.LocalMarginalUnreadProjectiveMeasurement\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(ρ : Matrix Bipartite Bipartite ℂ)\n    (ρA : Qubit → Qubit → Matrix Qubit Qubit ℂ)\n    (_hρ_density : IsHermitianTraceOne ρ)\n    (hblock : ρ = blockExpansion ρA) :\n\n    postMeasurement ρ = diagonalBlockState ρA ∧\n\n    partialTraceB (postMeasurement ρ) = partialTraceB ρ"
+        }
+      ]
+    },
+    {
+      "id": "OrthonormalityCoherentMarkovChainRows",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.OrthonormalityCoherentMarkovChainRows.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.OrthonormalityCoherentMarkovChainRows\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{d : ℕ}\n    (P : Matrix (Fin d) (Fin d) ℝ)\n    (hP_nonneg : ∀ i j, 0 ≤ P i j)\n    (hP_row_sum : ∀ i, ∑ j : Fin d, P i j = 1) :\n    ∀ i k : Fin d,\n      ∑ x : Fin d × Fin d,\n        starRingEnd ℂ (coherentRowState P i x) * coherentRowState P k x =\n          if i = k then 1 else 0"
+        }
+      ]
+    },
+    {
+      "id": "PostMeasurementStateObservedQubit",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.PostMeasurementStateObservedQubit.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.PostMeasurementStateObservedQubit\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{Y : Type*} [Fintype Y]\n    (ψ : Fin 2 × Y → ℂ)\n    (h_normalized : ∑ x : Fin 2 × Y, Complex.normSq (ψ x) = 1) :\n\n    outcomeProbability ψ 1 = ∑ y : Y, Complex.normSq (ψ (1, y)) ∧\n\n    (0 < outcomeProbability ψ 1 →\n      ∀ y : Y,\n        postMeasState ψ 1 (1, y) =\n          (↑(Real.sqrt (outcomeProbability ψ 1))⁻¹ : ℂ) * ψ (1, y) ∧\n        postMeasState ψ 1 (0, y) = 0)"
+        }
+      ]
+    },
+    {
+      "id": "SpectralProjectorsBooleanPhaseOracle",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.SpectralProjectorsBooleanPhaseOracle.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.SpectralProjectorsBooleanPhaseOracle\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{n : ℕ}\n    (f : (Fin n → Bool) → Bool) :\n\n    piPlus f * piPlus f = piPlus f ∧\n    piMinus f * piMinus f = piMinus f ∧\n    piPlus f * piMinus f = 0 ∧\n    piMinus f * piPlus f = 0 ∧\n    piPlus f + piMinus f = 1 ∧\n\n    phaseOracle f * piPlus f = piPlus f ∧\n\n    phaseOracle f * piMinus f = -piMinus f ∧\n\n    Matrix.trace (phaseOracle f) =\n      (2 : ℂ) ^ n - 2 * ↑(preimageOneCard f)"
+        }
+      ]
+    },
+    {
+      "id": "UnitaryExtensionMarkovChainIsometry",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.UnitaryExtensionMarkovChainIsometry.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.UnitaryExtensionMarkovChainIsometry\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{d : ℕ} [NeZero d]\n    (P : Matrix (Fin d) (Fin d) ℝ)\n    (hP_nonneg : ∀ i j, 0 ≤ P i j)\n    (hP_row_sum : ∀ i, ∑ j : Fin d, P i j = 1) :\n    ∃ U : Matrix (Fin d × Fin d) (Fin d × Fin d) ℂ,\n\n      U.conjTranspose * U = 1 ∧\n      U * U.conjTranspose = 1 ∧\n\n      (∀ i : Fin d,\n        (fun x => ∑ y, U x y * basisTensorZero i y) =\n          coherentRowState P i) ∧\n\n      (∀ a b i : Fin d,\n        U (a, b) (i, (0 : Fin d)) =\n          if a = i then (Real.sqrt (P i b) : ℂ) else 0)"
+        }
+      ]
+    },
+    {
+      "id": "WeylAverageShiftOperator",
+      "category": "LinearAlgebra",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.LinearAlgebra.WeylAverageShiftOperator.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.WeylAverageShiftOperator\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{d : ℕ} [NeZero d] (hd : 2 ≤ d) :\n\n    (clockZ : Operator d) * shiftX =\n      omega d • (shiftX * clockZ) ∧\n\n    weylAverage (shiftX : Operator d) = shiftX ∧\n\n    (shiftX : Operator d).transpose =\n      (shiftX : Operator d).conjTranspose ∧\n\n    (shiftX : Operator d).conjTranspose =\n      shiftX ^ (d - 1) ∧\n\n    (shiftX : Operator d) *\n      (shiftX : Operator d).conjTranspose = 1 ∧\n    (shiftX : Operator d).conjTranspose *\n      (shiftX : Operator d) = 1 ∧\n\n    (2 < d →\n      ¬∀ U : Operator d,\n        weylAverage U = U.transpose)"
+        }
+      ]
+    },
+    {
+      "id": "ApproximateTwoDesignDepthHaarLossFluctuations",
+      "category": "PQCLieTrainability",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.PQCLieTrainability.ApproximateTwoDesignDepthHaarLossFluctuations.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.ApproximateTwoDesignDepthHaarLossFluctuations\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(n : ℕ) (hn : 0 < n)\n\n    (γ ε : ℝ)\n    (hγ_pos : 0 < γ) (hγ_lt : γ < 1)\n    (hε_pos : 0 < ε) (hε_lt : ε < 1)\n    (L : ℕ)\n\n    (h_depth : (L : ℝ) ≥ Real.log (1 / ε) / Real.log (1 / (1 - γ)))\n\n    (c : ℝ) (hc_pos : 0 < c)\n    (p : ℕ → ℝ) (hp_pos : 0 < p n) (hp_gap : γ ≥ 1 / p n)\n\n    (O : Matrix (Fin (N n)) (Fin (N n)) ℂ)\n    (hO_sa : IsSelfAdjoint O)\n    (hO_traceless : Matrix.trace O = 0)\n    (hO_sq_bound : (Matrix.trace (O * O)).re ≤ (N n : ℝ))\n\n    (hO_sq_real : (Matrix.trace (O * O)).im = 0)\n    (ρ : Matrix (Fin (N n)) (Fin (N n)) ℂ)\n    (hρ_sa : IsSelfAdjoint ρ)\n    (hρ_trace : Matrix.trace ρ = 1)\n\n    (hρ_pure : ρ * ρ = ρ)\n\n    (haarExpect : (Matrix (Fin (N n)) (Fin (N n)) ℂ → ℂ) → ℂ)\n    (haarVar : (Matrix (Fin (N n)) (Fin (N n)) ℂ → ℂ) → ℝ)\n\n    (h_var_def : ∀ f : Matrix (Fin (N n)) (Fin (N n)) ℂ → ℂ,\n      (haarVar f : ℂ) =\n        haarExpect (fun U => f U * starRingEnd ℂ (f U)) -\n          haarExpect f * starRingEnd ℂ (haarExpect f))\n    (h_var_nonneg : ∀ f, 0 ≤ haarVar f)\n\n    (h_haar_first_moment :\n      ∀ (M A : Matrix (Fin (N n)) (Fin (N n)) ℂ),\n        haarExpect (fun U =>\n          Matrix.trace (U * M * U.conjTranspose * A)) =\n          Matrix.trace M / (↑(N n) : ℂ) * Matrix.trace A)\n\n    (h_loss_real :\n      ∀ U : Matrix (Fin (N n)) (Fin (N n)) ℂ,\n        starRingEnd ℂ (lossFunction U ρ O) = lossFunction U ρ O)\n\n    (h_haar_second_moment :\n      haarExpect (fun U =>\n        lossFunction U ρ O * lossFunction U ρ O) =\n        Matrix.trace (O * O) /\n          ((↑(N n) : ℂ) * ((↑(N n) : ℂ) + 1))) :\n\n    (1 - γ) ^ L ≤ ε ∧\n\n    (∃ K : ℝ, 0 < K ∧\n      ∀ L' : ℕ, (L' : ℝ) ≥ K * p n * Real.log (↑n) →\n        (1 - γ) ^ L' ≤ (↑n : ℝ) ^ (-c)) ∧\n\n    haarExpect (fun U => lossFunction U ρ O) = 0 ∧\n\n    haarVar (fun U => lossFunction U ρ O) =\n      (Matrix.trace (O * O)).re /\n        ((↑(N n) : ℝ) * ((↑(N n) : ℝ) + 1)) ∧\n\n    haarVar (fun U => lossFunction U ρ O) ≤\n      1 / ((↑(N n) : ℝ) + 1) ∧\n\n    Real.sqrt (haarVar (fun U => lossFunction U ρ O)) ≤\n      1 / Real.sqrt ((↑(N n) : ℝ) + 1)"
+        }
+      ]
+    },
+    {
+      "id": "ParityMaximumFejerKernelQSPResponse",
+      "category": "QSPParameterTrace",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.QSPParameterTrace.ParityMaximumFejerKernelQSPResponse.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.ParityMaximumFejerKernelQSPResponse\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(k : ℕ) (phi : Fin (k + 1) → ℝ) :\n\n    (∃ p : Polynomial ℂ,\n      p.natDegree ≤ k ∧\n      ∀ a : ℝ, a ∈ Set.Icc (-1 : ℝ) 1 →\n        p.eval (a : ℂ) = qspResponse k phi a) ∧\n\n    (∀ a : ℝ, a ∈ Set.Icc (-1 : ℝ) 1 →\n      qspResponse k phi (-a) = (-1 : ℂ) ^ k * qspResponse k phi a) ∧\n\n    (∀ a : ℝ, a ∈ Set.Icc (-1 : ℝ) 1 →\n      fejerP k a =\n        ((1 : ℝ) / ((k + 1 : ℕ) : ℝ) ^ 2 *\n          Complex.normSq (fejerGeometricSum k (theta a)) : ℝ)) ∧\n\n    (∀ a : ℝ, a ∈ Set.Icc (-1 : ℝ) 1 →\n      0 ≤ fejerPReal k a ∧ fejerPReal k a ≤ 1) ∧\n\n    fejerPReal k 1 = 1"
+        }
+      ]
+    },
+    {
+      "id": "PostselectedSpectralTransformationTrigonometricQSP",
+      "category": "QSPParameterTrace",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.QSPParameterTrace.PostselectedSpectralTransformationTrigonometricQSP.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\nopen QuantumLeanLeap.GoogleQHL.Bench36.PostselectedSpectralTransformationTrigonometricQSP\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{d L : ℕ}\n    (U : Operator d)\n    (hU : U.conjTranspose * U = 1)\n    (c : ℤ → ℂ)\n    (hP_bound : ∀ t : ℝ, Complex.normSq (trigPolynomial L c t) ≤ 1)\n    (θ φ : ℕ → ℝ)\n    (hW_amplitude : ∀ t : ℝ,\n      scalarQSPCircuit L (fun i => gateA (θ i) (φ i)) t 0 0 =\n        trigPolynomial L c t)\n    (Upow : ℤ → Operator d)\n    (hUpow_pos : ∀ m : ℤ, 0 ≤ m → Upow m = U ^ m.toNat)\n    (hUpow_neg : ∀ m : ℤ, m < 0 → Upow m = U.conjTranspose ^ (-m).toNat) :\n\n    controlZeroBlock\n        (spectralQSPCircuit L (fun i => gateA (θ i) (φ i)) U) =\n      trigPolynomialOfMatrix L c Upow ∧\n\n    ∀ ψ : Fin d → ℂ,\n      matVec (trigPolynomialOfMatrix L c Upow) ψ ≠ 0 →\n        normalized (matVec (controlZeroBlock\n          (spectralQSPCircuit L (fun i => gateA (θ i) (φ i)) U)) ψ) =\n        normalized (matVec (trigPolynomialOfMatrix L c Upow) ψ)"
+        }
+      ]
+    },
+    {
+      "id": "SharedParameterShiftRuleRXTensorRZ",
+      "category": "QSPParameterTrace",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.QSPParameterTrace.SharedParameterShiftRuleRXTensorRZ.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\nopen scoped BigOperators\n\nvariable {K : Type*} [Fintype K] [DecidableEq K]\nopen QuantumLeanLeap.GoogleQHL.Bench36.SharedParameterShiftRuleRXTensorRZ\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "(ρ O : Matrix ((Fin 2 × Fin 2) × K) ((Fin 2 × Fin 2) × K) ℂ)\n    (hρ_tr : Matrix.trace ρ = 1)\n    (hρ_sa : IsSelfAdjoint ρ)\n    (hO : IsSelfAdjoint O)\n    (θ : ℝ)\n    (derivL : ℂ)\n    (h_derivL : ∀ ε > (0 : ℝ), ∃ δ > (0 : ℝ), ∀ h : ℝ,\n      0 < |h| → |h| < δ →\n        ‖(loss ρ O (θ + h) - loss ρ O θ) / (↑h : ℂ) - derivL‖ < ε) :\n    derivL =\n      (↑((2 + Real.sqrt 2) / 4 : ℝ) : ℂ) *\n        (loss ρ O (θ + Real.pi / 4) - loss ρ O (θ - Real.pi / 4)) +\n      (↑((2 - Real.sqrt 2) / 4 : ℝ) : ℂ) *\n        (loss ρ O (θ - 3 * Real.pi / 4) - loss ρ O (θ + 3 * Real.pi / 4))"
+        }
+      ]
+    },
+    {
+      "id": "ThirdMomentTwoControlledSWAPTests",
+      "category": "QSPParameterTrace",
+      "imports": [
+        "QuantumLeanLeap.GoogleQHL.Bench36.QSPParameterTrace.ThirdMomentTwoControlledSWAPTests.Definitions"
+      ],
+      "context": "open QuantumLeanLeap.GoogleQHL.Bench36\nopen QuantumLeanLeap.GoogleQHL\n\nopen QuantumLeanLeap.GoogleQHL.Bench36.ThirdMomentTwoControlledSWAPTests\n",
+      "goals": [
+        {
+          "name": "main",
+          "goal": "{H : Type*} [Fintype H] [DecidableEq H]\n    (ρ : Matrix H H ℂ)\n    (hρ_sa : ρ.conjTranspose = ρ) (hρ_tr : Matrix.trace ρ = 1) :\n    Matrix.trace (XXObservable * sigmaOut ρ) =\n      Matrix.trace (ρ * ρ * ρ)"
+        }
+      ]
     }
   ]
 }

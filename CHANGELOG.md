@@ -2,11 +2,14 @@
 
 ## 0.1.0 — 2026-11-19
 
-- Lean 4.33.1 library with commit-pinned public Git dependencies.
-- Classical–quantum Hoare logic, unbounded semantics and resource proofs.
-- Restricted exact Parallel Grover baseline (N=4, k=1); general task incomplete.
-- Twelve-task open-library proof-completion benchmark, JSONL/API inputs,
-  per-attempt Lean/axiom validation and full-suite pass@k reporting.
-- Reproducible source packaging, Apache-2.0 notices and CI workflow.
+- Scope: independent reproduction of Discovering formally verified quantum programs with AI.
+- Removed algorithm catalog, Lean-QuantumAlg dependency and VQCC competition code.
+- QHL semantics, WP, unbounded loops, resource reasoning and Physlib interface adaptation.
+- Restricted Parallel Grover task (N=4, k=1); general paper tasks remain incomplete.
+- Translated 36 AlgBench problem specifications with 44 obligations into local matrix/QHL types.
+- Multi-obligation JSONL evaluation, full-suite pass@k and optional API generation (not run).
+- Two reference problems and a separate 12-task evaluator calibration suite.
+- Fixed public Git dependencies, Apache-2.0 attribution and reproducible source archives.
 
-This is an initial research release, not Google's library or benchmark.
+Specifications typechecking is not evidence that all 36 problems have been solved.
+This is not Google's official library, benchmark or performance reproduction.

@@ -1,7 +1,12 @@
 QuantumLeanLeap
-
 Distributed under Apache-2.0; see LICENSE.
-The Algorithms certificate facade refers to Lean-QuantumAlg by QudeLeap Team.
-Lean-QuantumAlg, Mathlib and Physlib are separately distributed dependencies;
-their original copyright and license notices remain applicable.
-This project is an independent research implementation, not an official Google release.
+
+The 36 benchmark problem specifications are adapted from QudeLeap Team's
+Lean-QuantumAlg-Bench, commit b540e86938ea82a546cfa55bed766adc894c2400,
+https://github.com/QudeLeap/Lean-QuantumAlg-Bench (Apache-2.0).
+Original notices are retained in adapted definitions. Statements were translated
+into local matrix/QHL types; source hashes and changes are in bench/migration.json
+and docs/Bench36-migration.md. No Lean-QuantumAlg algorithm library is included.
+
+Mathlib and Physlib are separately distributed dependencies with their own notices.
+This is an independent research implementation, not an official Google release.

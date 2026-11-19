@@ -1,2 +1,1 @@
-numpy==2.5.5
-kickmix==1.0.0
+# Benchmark and verification scripts use only the Python standard library (3.10+).

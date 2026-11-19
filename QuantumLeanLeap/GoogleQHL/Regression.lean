@@ -90,16 +90,10 @@ theorem diverge_infinite_cost (input : Branch Var 2) (htrace : input.2.trace.re 
     prefixCostSup gateCost diverge input = ⊤ := by
   simp [prefixCostSup, diverge_prefix_cost, htrace, ENNReal.iSup_natCast]
 
-def branchCounts : Circuits.DynamicCircuit Var 2 :=
+def branchCounts : Circuits.DynamicCircuit Var 1 :=
   .branch (fun s => decide (s .outcome = 0))
-    (.gate (.t 0)) (.seq (.gate (.t 0)) (.gate (.t 1)))
+    (.gate (.x 0)) (.seq (.gate (.x 0)) (.gate (.x 0)))
 
-theorem branch_uses_max : branchCounts.gateCount .t = 2 := rfl
-
-theorem swap_source_vs_native :
-    (Circuits.DynamicCircuit.gate (.swap (0 : Fin 2) 1 (by decide)) :
-      Circuits.DynamicCircuit Var 2).gateCount .swap = 1 ∧
-    (Circuits.PrimitiveGate.swap (0 : Fin 2) 1 (by decide)).native.eventTrace.length = 3 :=
-  ⟨rfl, Circuits.PrimitiveGate.native_trace_length _⟩
+theorem branch_uses_max : branchCounts.gateCount .x = 2 := rfl
 
 end QuantumLeanLeap.GoogleQHL.Regression

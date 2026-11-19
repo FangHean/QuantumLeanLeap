@@ -113,13 +113,13 @@ class LeanIntegrationTests(unittest.TestCase):
             code, report_path, report = self.run_candidate(program)
             self.assertEqual(code, 0, report)
             self.assertTrue(report["accepted"])
-            self.assertTrue(report["native_backend_verified"])
+            self.assertTrue(report["matrix_semantics_verified"])
             self.assertEqual(report["candidate_sha256"], v.digest(encode(program)))
             self.assertEqual(set(report["axioms"]), v.ALLOWED_AXIOMS)
             source = (report_path.parent / "Candidate.lean").read_bytes()
             self.assertEqual(report["generated_source_sha256"], v.digest(source))
             self.assertIn(b"ResetSpec.Contract candidate.toDynamic.compile", source)
-            self.assertIn(b"candidate.toDynamic.worstNativeGates", source)
+            self.assertIn(b"candidate.toDynamic.worstMatrixGates", source)
 
     def test_incorrect_quantum_semantics(self):
         wrong_feedback = seq(atom("measure"),

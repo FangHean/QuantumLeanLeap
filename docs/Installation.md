@@ -15,7 +15,7 @@ python3 scripts/verify_qhl.py
 ```
 
 第一次构建需要联网下载 Git 依赖和工具链，并可能消耗较多时间、内存及磁盘。
-Mathlib 缓存命令只负责其覆盖范围，不保证包含全部 QuantumAlg/Physlib 目标。
+Mathlib 缓存命令只负责其覆盖范围，不保证包含全部 Physlib 目标。
 
 ## 在另一个 Lake 项目中依赖
 
@@ -32,7 +32,7 @@ path = "../QuantumLeanLeap-0.1.0"
 
 ```lean
 import QuantumLeanLeap.GoogleQHL
-import QuantumLeanLeap.Algorithms
+import QuantumLeanLeap.GoogleQHL.Bench36
 import QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover
 ```
 
@@ -42,10 +42,10 @@ import QuantumLeanLeap.GoogleQHL.Tasks.ParallelGrover
 [[require]]
 name = "QuantumLeanLeap"
 git = "https://github.com/FangHean/QuantumLeanLeap.git"
-rev = "v0.1.0"
+rev = "main"
 ```
 
-需使用已发布标签；也可把 `rev` 换成该标签对应的完整 commit SHA。`scripts/package_release.py` 生成源码包和 SHA-256，
+`main` 跟随开发版本；正式实验请把 `rev` 换成验证过的完整 commit SHA。`scripts/package_release.py` 生成源码包和 SHA-256，
 打包采用明确目录白名单，排除 `.lake`、个人配置、API 密钥、运行日志和大型实验输出。
 
 ## 验证范围

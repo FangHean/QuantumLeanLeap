@@ -55,14 +55,7 @@ def main():
         "QuantumLeanLeap/GoogleQHL.lean", "QuantumLeanLeap.lean", "lakefile.toml",
         "lake-manifest.json", "lean-toolchain", "scripts/QHLAudit.lean", "scripts/verify_qhl.py",
         "scripts/verify_qhl_candidate.py", "scripts/test_qhl_candidate.py",
-        "verification/reset-v1.lock.json", "verification/reset-native-v2.lock.json",
-        "verification/reset-physlib-v3.lock.json", "verification/reset-omega-v4.lock.json",
-        "verification/reset-task1-v5.lock.json", "verification/reset-release-v6.lock.json",
-        "verification/interface-sources.json")]
-    upstream = (ROOT / ".lake/packages/QuantumAlg").resolve()
-    rev = subprocess.check_output(["git", "-C", str(upstream), "rev-parse", "HEAD"], text=True).strip()
-    tracked = subprocess.check_output(
-        ["git", "-C", str(upstream), "status", "--porcelain", "--untracked-files=no"], text=True)
+        "verification/reset-paper-v7.lock.json", "verification/interface-sources.json")]
     from verify_qhl_candidate import snapshot
     dependencies = snapshot()["dependencies"]
     report = {
@@ -86,8 +79,6 @@ def main():
         "declarations": declarations,
         "lean_toolchain": (ROOT / "lean-toolchain").read_text().strip(),
         "dependency_commits": dependencies,
-        "quantumalg": {"path": str(upstream), "commit": rev, "tracked_changes": tracked,
-                       "dependency_is_commit_pinned": True},
         "sha256": {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")

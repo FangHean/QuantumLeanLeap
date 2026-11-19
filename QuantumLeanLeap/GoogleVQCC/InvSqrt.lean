@@ -1,5 +1,0 @@
-import QuantumLeanLeap.GoogleVQCC.InvSqrt.Specification
-import QuantumLeanLeap.GoogleVQCC.InvSqrt.Circuit
-import QuantumLeanLeap.GoogleVQCC.InvSqrt.Arithmetic
-import QuantumLeanLeap.GoogleVQCC.InvSqrt.Newton
-import QuantumLeanLeap.GoogleVQCC.InvSqrt.NewtonFixed

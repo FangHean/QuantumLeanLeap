@@ -24,17 +24,33 @@ class BenchTests(unittest.TestCase):
                       'by trivial\naxiom fake : False', 'by trivial\n#print axioms x',None,'']:
             with self.subTest(proof=proof),self.assertRaises(ValueError): bench.source(t,proof)
     def test_axiom_whitelist(self):
-        for text in ['', "'QLLBenchSubmission.accepted' depends on axioms: [sorryAx]",
-                     "'QLLBenchSubmission.accepted' depends on axioms: [Evil.axiom]"]:
+        for text in ['', "'QLLBenchSubmission.accepted_0' depends on axioms: [sorryAx]",
+                     "'QLLBenchSubmission.accepted_0' depends on axioms: [Evil.axiom]"]:
             with self.assertRaises(ValueError): bench.audit(text)
-        self.assertEqual(bench.audit("'QLLBenchSubmission.accepted' depends on axioms: [propext]"),['propext'])
+        self.assertEqual(bench.audit("'QLLBenchSubmission.accepted_0' depends on axioms: [propext]"),['propext'])
     def test_duplicate_axiom_report(self):
-        text="'QLLBenchSubmission.accepted' does not depend on any axioms"
+        text="'QLLBenchSubmission.accepted_0' does not depend on any axioms"
         with self.assertRaises(ValueError): bench.audit(text+text)
     def test_prompt_has_no_reference(self):
         t=next(iter(bench.load_tasks().values()))
         self.assertIn('<PROOF>',bench.prompt(t))
         self.assertNotIn('by rfl',bench.prompt(t))
     def test_suite_unique(self):
-        self.assertEqual(len(bench.load_tasks()),12)
+        self.assertEqual(len(bench.load_tasks()),36)
+    def test_multiple_goals_require_every_proof(self):
+        t=bench.load_tasks()['ExactQROMFactorization']
+        self.assertEqual(len(bench.goals(t)),4)
+        for proofs in (['by rfl'], ['by rfl']*3, ['by rfl']*5):
+            with self.assertRaises(ValueError): bench.source(t,proofs)
+        code=bench.source(t,['by rfl']*4)
+        self.assertEqual(code.count('#print axioms'),4)
+        with self.assertRaises(ValueError):
+            bench.audit("'QLLBenchSubmission.accepted_0' does not depend on any axioms",4)
+
+    def test_original_36_mapping_and_44_obligations(self):
+        self.assertEqual(sum(len(bench.goals(t)) for t in bench.load_tasks().values()),44)
+        import json
+        mapping=json.loads((bench.ROOT/'bench/migration.json').read_text())['tasks']
+        self.assertEqual({r['id'] for r in mapping},set(bench.load_tasks()))
+
 if __name__=='__main__': unittest.main()

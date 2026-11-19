@@ -1,4 +1,5 @@
 import QuantumLeanLeap.GoogleQHL
+import QuantumLeanLeap.GoogleQHL.Bench36.Bridge
 
 open QuantumLeanLeap.GoogleQHL
 
@@ -39,8 +40,6 @@ open QuantumLeanLeap.GoogleQHL
 #print axioms expectedCostApprox_tendsto
 #print axioms expectedCost_le_mass
 #print axioms Circuits.PrimitiveGate.unitary
-#print axioms Circuits.PrimitiveGate.native_trace_length
-#print axioms Circuits.Circuit.native_trace_length
 #print axioms Circuits.wireProjector_complete
 #print axioms Circuits.DynamicCircuit.compile_correct
 #print axioms Circuits.DynamicCircuit.expect_wp
@@ -52,7 +51,6 @@ open QuantumLeanLeap.GoogleQHL
 #print axioms Regression.diverge_infinite_cost
 #print axioms Regression.cost_before_abort
 #print axioms Regression.branch_uses_max
-#print axioms Regression.swap_source_vs_native
 #print axioms positive_norm_le_trace
 #print axioms PartialDensity.isEffect
 #print axioms tsum_limit_eq_iSup
@@ -118,17 +116,17 @@ open QuantumLeanLeap.GoogleQHL
 #print axioms IterationRegression.retry_expected_cost_le_two
 #print axioms IterationRegression.skip_loop_iterations_infinite
 #print axioms Verification.ResetLanguage.Program.fuel_independent
-#print axioms Circuits.DynamicCircuit.worstNativeGates_gate
-#print axioms Circuits.DynamicCircuit.worstNativeGates_eq_weighted
-#print axioms Verification.ResetLanguage.native_x_matrix
-#print axioms Verification.ResetLanguage.native_z_matrix
+#print axioms Circuits.DynamicCircuit.worstMatrixGates_gate
+#print axioms Circuits.DynamicCircuit.worstMatrixGates_eq_weighted
+#print axioms Verification.ResetLanguage.matrix_x_matrix
+#print axioms Verification.ResetLanguage.matrix_z_matrix
 #print axioms Verification.ResetLanguage.Program.toDynamic_compile
 #print axioms Verification.ResetLanguage.Program.toDynamic_run
-#print axioms Verification.ResetLanguage.Program.native_contract
-#print axioms Verification.ResetLanguage.Program.native_output
-#print axioms Verification.ResetLanguage.Program.native_count
-#print axioms Verification.ResetLanguage.Program.native_gate_budget
-#print axioms Verification.ResetLanguage.Program.native_expected_gate_bound
+#print axioms Verification.ResetLanguage.Program.matrix_contract
+#print axioms Verification.ResetLanguage.Program.matrix_output
+#print axioms Verification.ResetLanguage.Program.matrix_count
+#print axioms Verification.ResetLanguage.Program.matrix_gate_budget
+#print axioms Verification.ResetLanguage.Program.matrix_expected_gate_bound
 #print axioms PaperAPI.densityEquiv
 #print axioms PaperAPI.observableEquiv
 #print axioms PaperAPI.stateEquiv
@@ -147,8 +145,8 @@ open QuantumLeanLeap.GoogleQHL
 #print axioms PaperAPI.wp_qif
 #print axioms PaperAPI.wp_qwhile_unfold
 #print axioms PaperAPI.Regression.false_prop_loop_returns_input
-#print axioms PaperAPI.Regression.fromReset_native_histories
-#print axioms PaperAPI.Regression.fromReset_native_expectation
+#print axioms PaperAPI.Regression.fromReset_matrix_histories
+#print axioms PaperAPI.Regression.fromReset_matrix_expectation
 #print axioms PaperAPI.observableSup_isLUB
 #print axioms PaperAPI.observableOmegaCPO
 #print axioms PaperAPI.observableOrderBot
@@ -211,3 +209,6 @@ open QuantumLeanLeap.GoogleQHL
 #print axioms Tasks.ParallelGrover.Regression.no_slots_cannot_find_all
 #print axioms Tasks.ParallelGrover.Regression.two_slots_one_round
 #print axioms Tasks.ParallelGrover.Regression.two_slots_find_all
+
+#print axioms Bench36.certifiedProgram_wp
+#print axioms Bench36.certifiedProgram_eq

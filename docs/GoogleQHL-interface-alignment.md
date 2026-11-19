@@ -99,16 +99,15 @@ example (g : Store Unit → Prop) [DecidablePred g]
 `Compatibility/Regression.lean` 证明：
 
 - False 命题条件的循环返回原输入，包括可求和经典混合。
-- 全部既有 JSON 候选可翻译到新入口，保持其原生动态电路的每条测量历史。
-- 对任意合法混合初态和断言，新入口的实内积期望与原生动态电路期望一致。
+- 全部既有 JSON 候选可翻译到新入口，保持其独立矩阵动态电路的每条测量历史。
+- 对任意合法混合初态和断言，新入口的实内积期望与独立矩阵动态电路期望一致。
 - 恒真 `skip` 循环的每个断言都是泛函不动点，但循环 WP 和 Kleene 链上确界均为底元素。
   这区分了“满足不动点方程”和“选取最小解”。
 - 恒假条件的 Kleene 链上确界严格等于原后置断言。
 
 `scripts/QHLAudit.lean` 审计这些适配定理的传递公理依赖。
-本地候选验收当前使用 `verification/reset-task1-v5.lock.json`，保留 v1/v2/v3/v4 历史清单。
-v4 引入 ω-CPO 适配，v5 纳入 Parallel Grover 子实例后的源码集合；候选入口仍只支持复位任务。
-任务规格、候选 JSON schema 和预算未改变，新增依赖及适配源码纳入新清单。
+本地候选验收当前使用 `verification/reset-paper-v7.lock.json`。
+当前范围移除了算法库和竞赛依赖，候选入口仍仅支持复位任务。
 
 ## 后续边界
 
