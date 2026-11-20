@@ -1,21 +1,26 @@
 # QuantumLeanLeap
 
-《[Discovering formally verified quantum programs with AI](https://arxiv.org/abs/2611.09822)》的 Lean 4 形式化库复现，并仿照AlgBench的36道题目建立了一套benchmark。
-公开仓库：[FangHean/QuantumLeanLeap](https://github.com/FangHean/QuantumLeanLeap)。许可证：Apache-2.0。
+A Lean 4 formalization library reproducing the framework presented in [Discovering Formally Verified Quantum Programs with AI](https://arxiv.org/abs/2611.09822), together with a benchmark modeled after the 36 problems in AlgBench.
 
-## 内容
+**Public repository:** [FangHean/QuantumLeanLeap](https://github.com/FangHean/QuantumLeanLeap)  
+**License:** Apache-2.0
 
-- `QuantumLeanLeap.GoogleQHL`：量子 Hoare 逻辑、经典–量子状态、测量和反馈、WP、无界循环语义、期望资源成本。
-- `GoogleQHL.Compatibility`：论文公开接口、Physlib Hermitian 类型、Mathlib ω-CPO 与最小不动点适配。
-- `GoogleQHL.Tasks.ParallelGrover`：论文 Parallel Grover 的 N=4、k=1、正整数 m 子实例；非一般任务或论文性能复现。
-- `GoogleQHL.Bench36`：将 AlgBench 的 **36 道题、44 个证明目标**迁移到本项目的数学表示。
-- `scripts/bench.py`：固定目标、JSONL 导入、API 生成适配器、Lean/公理检查、全题集 pass@k；多目标题全部认证才算通过。
-- `scripts/verify_qhl_candidate.py`：独立的单量子比特测量反馈复位候选验收，候选为闭合 JSON 程序语言。
-题目对应关系、类型转换和原题限制见 [迁移说明](docs/Bench36-migration.md)。
+## Contents
 
-## 使用
+- `QuantumLeanLeap.GoogleQHL`: Quantum Hoare logic, classical–quantum states, measurement and feedback, weakest preconditions (WP), unbounded loop semantics, and expected resource costs.
+- `GoogleQHL.Compatibility`: Compatibility with the paper's public interfaces, Physlib's Hermitian types, and Mathlib's ω-CPO and least fixed-point constructions.
+- `GoogleQHL.Tasks.ParallelGrover`: A restricted instance of the paper's Parallel Grover task with N = 4, k = 1, and positive integer m. This does not constitute a reproduction of the general task or the performance results reported in the paper.
+- `GoogleQHL.Bench36`: Ports all **36 AlgBench problems and 44 proof goals** into the mathematical representations used in this project.
+- `scripts/bench.py`: Fixed benchmark targets, JSONL import, API-based generation adapters, Lean and axiom checks, and full-benchmark pass@k evaluation.
+- `scripts/verify_qhl_candidate.py`: An independent verifier for single-qubit measurement-feedback reset candidates, using a closed JSON-based program language.
 
-Lean `4.33.1`；Python `3.10+`。Lean 依赖仅 Mathlib 与 Physlib 及其传递依赖，固定 commit。
+For problem mappings, type conversions, and limitations of the original tasks, see the [Migration Guide](docs/Bench36-migration.md).
+
+## Getting Started
+
+**Requirements:** Lean `4.33.1` and Python `3.10+`.
+
+The Lean dependencies are limited to Mathlib, Physlib, and their transitive dependencies, with versions pinned to specific commits.
 
 ```sh
 git clone https://github.com/FangHean/QuantumLeanLeap.git
@@ -26,14 +31,16 @@ python3 scripts/bench.py list
 python3 scripts/bench.py export /tmp/quantumleanleap-prompts.jsonl
 ```
 
+Import the library in Lean:
+
 ```lean
 import QuantumLeanLeap.GoogleQHL
 import QuantumLeanLeap.GoogleQHL.Bench36
 ```
 
-详见 [安装与依赖](docs/Installation.md)、[评测说明](docs/Benchmark.md)、[论文复现范围](docs/GoogleQHL-reproduction.md)。
+For more details, see [Installation and Dependencies](docs/Installation.md), [Benchmark Documentation](docs/Benchmark.md), and [Scope of the GoogleQHL Reproduction](docs/GoogleQHL-reproduction.md).
 
-## 验证与边界
+## Verification and Limitations
 
 ```sh
 python3 scripts/verify_qhl.py
